@@ -20,8 +20,6 @@ const defaultOptions = {
     treatSimilarArgsAsTheSame: false,
     forceDoubleCallEvenIfAttemptedOnlyOnes: false
 };
-// TODO: should work right with async functions
-// TODO: should work right with functions that return anything (not only promises) (not async)
 // TODO: should work right with functions that throw errors
 // TODO: ability to change default options
 function debounce(func, options = {}) {
@@ -99,7 +97,14 @@ function debounce(func, options = {}) {
         }
         function callFunc() {
             const element = map.get(hash);
-            const res = func.apply(context, args);
+            let res;
+            try {
+                res = func.apply(context, args);
+            }
+            catch (err) {
+                element.defProm.reject(err);
+                return;
+            }
             if (res instanceof Promise) {
                 res.then((result) => {
                     element.defProm.resolve(result);

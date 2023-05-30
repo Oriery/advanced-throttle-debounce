@@ -445,6 +445,84 @@ describe("end-user test", function () {
       expect(promise1).to.eventually.equal(resolvingWith)
       expect(promise2).to.eventually.equal(resolvingWith)
     })
+
+    it('should work properly with erroring async functions', async () => {
+      const error = new Error('error')
+      testFunc = sandbox.stub().rejects(error)
+
+      debouncedTestFunc = controller.debounce(testFunc, {
+        wait: NORMAL_WAIT
+      })
+
+      const promise1 = debouncedTestFunc()
+      const promise2 = debouncedTestFunc()
+
+      expect(promise1).to.be.a('promise')
+      expect(promise2).to.be.a('promise')
+      expect(promise1).to.eventually.be.rejectedWith(error)
+      expect(promise2).to.eventually.be.rejectedWith(error)
+    })
+
+  })
+
+  describe('sync functions (debouce converts them into async which return a promise)', function () {
+
+    let returnsWhat;
+
+    this.beforeEach(() => {
+      returnsWhat = 'result'
+      testFunc = sandbox.stub().returns(returnsWhat)
+
+      debouncedTestFunc = controller.debounce(testFunc, {
+        wait: NORMAL_WAIT
+      })
+    })
+
+    it('should return a Promise to each attempt when LEADING CALL', async () => {
+      const promise1 = debouncedTestFunc()
+      const promise2 = debouncedTestFunc()
+
+      expect(promise1).to.be.a('promise')
+      expect(promise2).to.be.a('promise')
+      expect(promise1).to.eventually.equal(returnsWhat)
+      expect(promise2).to.eventually.equal(returnsWhat)
+    })
+
+    it('should return a Promise to each attempt when TRAILING CALL', async () => {
+      debouncedTestFunc = controller.debounce(testFunc, {
+        wait: NORMAL_WAIT,
+        trailing: true,
+        leading: false
+      })
+
+      const promise1 = debouncedTestFunc()
+      const promise2 = debouncedTestFunc()
+
+      await sleep(LONGER_THAN_WAIT)
+      expect(promise1).to.be.a('promise')
+      expect(promise2).to.be.a('promise')
+      expect(promise1).to.eventually.equal(returnsWhat)
+      expect(promise2).to.eventually.equal(returnsWhat)
+    })
+
+    it('should work properly with erroring sync functions', async () => {
+      const error = new Error('error')
+      testFunc = sandbox.stub().throws(error)
+
+      debouncedTestFunc = controller.debounce(testFunc, {
+        wait: NORMAL_WAIT
+      })
+
+      const promise1 = debouncedTestFunc()
+      const promise2 = debouncedTestFunc()
+
+      expect(promise1).to.be.a('promise')
+      expect(promise2).to.be.a('promise')
+
+      expect(promise1).to.eventually.be.rejectedWith(error)
+      expect(promise2).to.eventually.be.rejectedWith(error)
+    })
+
   })
 })
 
