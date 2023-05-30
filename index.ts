@@ -26,18 +26,27 @@ export type ElementOfMap = {
   timesAttempted : number;
 };
 
-export function debounce(func : Function , options : Options = {}) {
-  checkOptions(options)
+const defaultOptions : Options = {
+  leading: true,
+  trailing: false,
+  wait: 1000,
+  maxWait: Infinity,
+  differentArgs: true,
+  differentThis: true,
+  treatSimilarContextAsTheSame: false,
+  treatSimilarArgsAsTheSame: false,
+  forceDoubleCallEvenIfAttemptedOnlyOnes: false
+};
 
-  let leading = options.leading !== false; // default: true
-  let trailing = options.trailing === true; // default: false
-  let wait = options.wait || 1000;
-  let maxWait = options.maxWait || Infinity;
-  let differentArgs = options.differentArgs !== false; // default: true
-  let differentThis = options.differentThis !== false; // default: true
-  let forceDoubleCallEvenIfAttemptedOnlyOnes = options.forceDoubleCallEvenIfAttemptedOnlyOnes === true; // default: false
-  let treatSimilarContextAsTheSame = options.treatSimilarContextAsTheSame === true; // default: false
-  let treatSimilarArgsAsTheSame = options.treatSimilarArgsAsTheSame === true; // default: false
+// TODO: should work right with async functions
+// TODO: should work right with functions that return anything
+// TODO: should work right with functions that throw errors
+// TODO: ability to change default options
+
+export function debounce(func : Function , options : Options = {}) {
+  options = Object.assign({}, defaultOptions, options);
+
+  checkOptions(options);
 
   let timeoutForWait : number | null = null;
   let timoutForMaxWait : number | null = null;
@@ -71,7 +80,7 @@ export function debounce(func : Function , options : Options = {}) {
       element.timesAttempted++;
 
       clearTimeout(element.timeoutForWait || undefined);
-      element.timeoutForWait = setTimeout(timeoutWentOff, wait, hash);
+      element.timeoutForWait = setTimeout(timeoutWentOff, options.wait, hash);
     }
 
     function setupElement() {
@@ -82,9 +91,9 @@ export function debounce(func : Function , options : Options = {}) {
         timesAttempted : 1
       };
       
-      element.timeoutForWait = setTimeout(timeoutWentOff, wait, hash);
-      if (maxWait && maxWait !== Infinity) {
-        element.timeoutForMaxWait = setTimeout(timeoutMaxWaitWentOff, maxWait);
+      element.timeoutForWait = setTimeout(timeoutWentOff, options.wait, hash);
+      if (options.maxWait && options.maxWait !== Infinity) {
+        element.timeoutForMaxWait = setTimeout(timeoutMaxWaitWentOff, options.maxWait);
       }
 
       map.set(hash, element);
@@ -101,16 +110,16 @@ export function debounce(func : Function , options : Options = {}) {
     }
 
     function callLeadingIfNeeded() {
-      if (leading) {
+      if (options.leading) {
         func.apply(context, args);
       }
     }
 
     function callTrailingIfNeeded(hash : string) {
-      if (trailing) {
+      if (options.trailing) {
         const element = map.get(hash);
         // don't call trailing if there was only one attempt and both leading and trailing are true
-        if (element && leading && element.timesAttempted === 1 && !forceDoubleCallEvenIfAttemptedOnlyOnes) {
+        if (element && options.leading && element.timesAttempted === 1 && !options.forceDoubleCallEvenIfAttemptedOnlyOnes) {
           return;
         }
         func.apply(context, args);
@@ -135,8 +144,8 @@ export function debounce(func : Function , options : Options = {}) {
     let hashOfThis : string = '';
     let hashOfArgs : string = '';
   
-    if (differentThis) {
-      if (treatSimilarContextAsTheSame) {
+    if (options.differentThis) {
+      if (options.treatSimilarContextAsTheSame) {
         hashOfThis = simpleHash(JSON.stringify(context));
       } else {
         if (typeof context === 'object') {
@@ -147,8 +156,8 @@ export function debounce(func : Function , options : Options = {}) {
       }
     }
 
-    if (differentArgs) {
-      if (treatSimilarArgsAsTheSame) {
+    if (options.differentArgs) {
+      if (options.treatSimilarArgsAsTheSame) {
         hashOfArgs = simpleHash(JSON.stringify(args));
       } else {
         for (let arg of args) {
@@ -204,6 +213,15 @@ function checkOptions(options : Options) {
   }
   if (typeof options.differentThis !== 'undefined' && typeof options.differentThis !== 'boolean') {
     throw new Error("The 'differentThis' option must be a boolean if provided.");
+  }
+  if (typeof options.treatSimilarContextAsTheSame !== 'undefined' && typeof options.treatSimilarContextAsTheSame !== 'boolean') {
+    throw new Error("The 'treatSimilarContextAsTheSame' option must be a boolean if provided.");
+  }
+  if (typeof options.treatSimilarArgsAsTheSame !== 'undefined' && typeof options.treatSimilarArgsAsTheSame !== 'boolean') {
+    throw new Error("The 'treatSimilarArgsAsTheSame' option must be a boolean if provided.");
+  }
+  if (typeof options.forceDoubleCallEvenIfAttemptedOnlyOnes !== 'undefined' && typeof options.forceDoubleCallEvenIfAttemptedOnlyOnes !== 'boolean') {
+    throw new Error("The 'forceDoubleCallEvenIfAttemptedOnlyOnes' option must be a boolean if provided.");
   }
 }
 
