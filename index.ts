@@ -14,6 +14,8 @@ export type Options = {
   maxWait?: number; // the maximum length of the attempt group. Default: Infinity
   differentArgs?: boolean; // should the attempt be considered as different if the arguments are different. Default: true
   differentThis?: boolean; // should the attempt be considered as different if the 'this' context is different. Default: true
+  treatSimilarContextAsTheSame?: boolean; // should the attempt be considered as different if the 'this' context is similar. Default: false
+  treatSimilarArgsAsTheSame?: boolean; // should the attempt be considered as different if objects in arguments are similar but not the same. Default: false
   forceDoubleCallEvenIfAttemptedOnlyOnes?: boolean; // should the function be called twice if it was attempted only ones. By default if both 'leading' and 'trailing' are true, than only LEADING CALL will be called if there was only one attempt. Default: false
 };
 
@@ -34,16 +36,19 @@ export function debounce(func : Function , options : Options = {}) {
   let differentArgs = options.differentArgs !== false; // default: true
   let differentThis = options.differentThis !== false; // default: true
   let forceDoubleCallEvenIfAttemptedOnlyOnes = options.forceDoubleCallEvenIfAttemptedOnlyOnes === true; // default: false
+  let treatSimilarContextAsTheSame = options.treatSimilarContextAsTheSame === true; // default: false
+  let treatSimilarArgsAsTheSame = options.treatSimilarArgsAsTheSame === true; // default: false
 
   let timeoutForWait : number | null = null;
   let timoutForMaxWait : number | null = null;
 
   const map = new Map<string, ElementOfMap>();
+  const mapOfSimilarObjectsHashes = new Map<object, string>();
   
   return function(this : any) {
     const context = this;
     const args = arguments;
-    const hash = simpleHash((differentThis ? JSON.stringify(context) : '') + (differentArgs ? JSON.stringify(args) : ''));
+    const hash = getHashForMap(context, args);
     
     const element = map.get(hash);
     if (!element) {
@@ -123,6 +128,50 @@ export function debounce(func : Function , options : Options = {}) {
         clearTimeout(element.timeoutForMaxWait);
       }
       map.delete(hash);
+    }
+  }
+
+  function getHashForMap(context : object, args : IArguments) : string {
+    let hashOfThis : string = '';
+    let hashOfArgs : string = '';
+  
+    if (differentThis) {
+      if (treatSimilarContextAsTheSame) {
+        hashOfThis = simpleHash(JSON.stringify(context));
+      } else {
+        if (typeof context === 'object') {
+          hashOfThis = getUniqueHashOfObject(context);
+        } else {
+          hashOfThis = simpleHash(JSON.stringify(context));
+        }
+      }
+    }
+
+    if (differentArgs) {
+      if (treatSimilarArgsAsTheSame) {
+        hashOfArgs = simpleHash(JSON.stringify(args));
+      } else {
+        for (let arg of args) {
+          if (typeof arg === 'object') {
+            hashOfArgs += getUniqueHashOfObject(arg);
+          } else {
+            hashOfArgs += simpleHash(JSON.stringify(arg));
+          }
+        }
+      }
+    }
+
+    return simpleHash(hashOfThis + hashOfArgs);
+  }
+
+  function getUniqueHashOfObject(object : object) : string {
+    const hash = mapOfSimilarObjectsHashes.get(object);
+    if (hash) {
+      return hash;
+    } else {
+      const newHash = simpleHash(JSON.stringify(object) + Math.random());
+      mapOfSimilarObjectsHashes.set(object, newHash);
+      return newHash;
     }
   }
 }

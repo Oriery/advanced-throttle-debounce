@@ -18,13 +18,16 @@ function debounce(func, options = {}) {
     let differentArgs = options.differentArgs !== false; // default: true
     let differentThis = options.differentThis !== false; // default: true
     let forceDoubleCallEvenIfAttemptedOnlyOnes = options.forceDoubleCallEvenIfAttemptedOnlyOnes === true; // default: false
+    let treatSimilarContextAsTheSame = options.treatSimilarContextAsTheSame === true; // default: false
+    let treatSimilarArgsAsTheSame = options.treatSimilarArgsAsTheSame === true; // default: false
     let timeoutForWait = null;
     let timoutForMaxWait = null;
     const map = new Map();
+    const mapOfSimilarObjectsHashes = new Map();
     return function () {
         const context = this;
         const args = arguments;
-        const hash = simpleHash((differentThis ? JSON.stringify(context) : '') + (differentArgs ? JSON.stringify(args) : ''));
+        const hash = getHashForMap(context, args);
         const element = map.get(hash);
         if (!element) {
             newElement();
@@ -93,6 +96,50 @@ function debounce(func, options = {}) {
                 clearTimeout(element.timeoutForMaxWait);
             }
             map.delete(hash);
+        }
+    }
+    function getHashForMap(context, args) {
+        let hashOfThis = '';
+        let hashOfArgs = '';
+        if (differentThis) {
+            if (treatSimilarContextAsTheSame) {
+                hashOfThis = simpleHash(JSON.stringify(context));
+            }
+            else {
+                if (typeof context === 'object') {
+                    hashOfThis = getUniqueHashOfObject(context);
+                }
+                else {
+                    hashOfThis = simpleHash(JSON.stringify(context));
+                }
+            }
+        }
+        if (differentArgs) {
+            if (treatSimilarArgsAsTheSame) {
+                hashOfArgs = simpleHash(JSON.stringify(args));
+            }
+            else {
+                for (let arg of args) {
+                    if (typeof arg === 'object') {
+                        hashOfArgs += getUniqueHashOfObject(arg);
+                    }
+                    else {
+                        hashOfArgs += simpleHash(JSON.stringify(arg));
+                    }
+                }
+            }
+        }
+        return simpleHash(hashOfThis + hashOfArgs);
+    }
+    function getUniqueHashOfObject(object) {
+        const hash = mapOfSimilarObjectsHashes.get(object);
+        if (hash) {
+            return hash;
+        }
+        else {
+            const newHash = simpleHash(JSON.stringify(object) + Math.random());
+            mapOfSimilarObjectsHashes.set(object, newHash);
+            return newHash;
         }
     }
 }
