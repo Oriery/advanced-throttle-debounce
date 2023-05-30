@@ -405,6 +405,47 @@ describe("end-user test", function () {
       })
     })
   })
+
+  describe('async functions (Promises)', function () {
+
+    let resolvingWith;
+
+    this.beforeEach(() => {
+      resolvingWith = 'resolved'
+      testFunc = sandbox.stub().resolves(resolvingWith)
+
+      debouncedTestFunc = controller.debounce(testFunc, {
+        wait: NORMAL_WAIT
+      })
+    })
+
+    it('should return a Promise to each attempt when LEADING CALL', async () => {
+      const promise1 = debouncedTestFunc()
+      const promise2 = debouncedTestFunc()
+
+      expect(promise1).to.be.a('promise')
+      expect(promise2).to.be.a('promise')
+      expect(promise1).to.eventually.equal(resolvingWith)
+      expect(promise2).to.eventually.equal(resolvingWith)
+    })
+
+    it('should return a Promise to each attempt when TRAILING CALL', async () => {
+      debouncedTestFunc = controller.debounce(testFunc, {
+        wait: NORMAL_WAIT,
+        trailing: true,
+        leading: false
+      })
+
+      const promise1 = debouncedTestFunc()
+      const promise2 = debouncedTestFunc()
+
+      await sleep(LONGER_THAN_WAIT)
+      expect(promise1).to.be.a('promise')
+      expect(promise2).to.be.a('promise')
+      expect(promise1).to.eventually.equal(resolvingWith)
+      expect(promise2).to.eventually.equal(resolvingWith)
+    })
+  })
 })
 
 async function sleep(ms) {

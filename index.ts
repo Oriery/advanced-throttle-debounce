@@ -24,6 +24,8 @@ export type ElementOfMap = {
   timeoutForWait : NodeJS.Timeout | null;
   timeoutForMaxWait : NodeJS.Timeout | null;
   timesAttempted : number;
+  defProm : Deferred<any>;
+  promise : Promise<any> | null;
 };
 
 const defaultOptions : Options = {
@@ -39,7 +41,7 @@ const defaultOptions : Options = {
 };
 
 // TODO: should work right with async functions
-// TODO: should work right with functions that return anything
+// TODO: should work right with functions that return anything (not only promises) (not async)
 // TODO: should work right with functions that throw errors
 // TODO: ability to change default options
 
@@ -59,18 +61,21 @@ export function debounce(func : Function , options : Options = {}) {
     const args = arguments;
     const hash = getHashForMap(context, args);
     
-    const element = map.get(hash);
+    let element = map.get(hash);
     if (!element) {
       newElement();
     } else {
       existingElement(element);
     }
 
+    element = map.get(hash);
+    return element!.promise;
+
     function newElement(forceCallLeading : boolean = false) {
       setupElement();
 
       if (forceCallLeading) {
-        func.apply(context, args);
+        callFunc();
       } else {
         callLeadingIfNeeded();
       }
@@ -84,11 +89,14 @@ export function debounce(func : Function , options : Options = {}) {
     }
 
     function setupElement() {
+      const defferedPromise = new Deferred();
       const element : ElementOfMap = {
         func : func,
         timeoutForWait : null,
         timeoutForMaxWait : null,
-        timesAttempted : 1
+        timesAttempted : 1,
+        defProm: defferedPromise,
+        promise : defferedPromise.promise
       };
       
       element.timeoutForWait = setTimeout(timeoutWentOff, options.wait, hash);
@@ -111,7 +119,7 @@ export function debounce(func : Function , options : Options = {}) {
 
     function callLeadingIfNeeded() {
       if (options.leading) {
-        func.apply(context, args);
+        callFunc();
       }
     }
 
@@ -122,7 +130,21 @@ export function debounce(func : Function , options : Options = {}) {
         if (element && options.leading && element.timesAttempted === 1 && !options.forceDoubleCallEvenIfAttemptedOnlyOnes) {
           return;
         }
-        func.apply(context, args);
+        callFunc();
+      }
+    }
+
+    function callFunc() {
+      const element = map.get(hash);
+      const res = func.apply(context, args);
+      if (res instanceof Promise) {
+        res.then((result) => {
+          element!.defProm.resolve(result);
+        }).catch((err) => {
+          element!.defProm.reject(err);
+        });
+      } else {
+        element!.defProm.resolve(res);
       }
     }
   }
@@ -240,4 +262,17 @@ function simpleHash(input : string) {
       }
   }
   return ((hash1 << 40) | (hash2 << 32) | (hash3 << 24) | (hash4 << 16) | (hash5 << 8) | hash6).toString(16);
+}
+
+class Deferred<T> {
+  promise: Promise<T>;
+  resolve!: (value: T | PromiseLike<T>) => void;
+  reject!: (reason?: any) => void;
+
+  constructor() {
+      this.promise = new Promise<T>((resolve, reject) => {
+          this.reject = reject;
+          this.resolve = resolve;
+      });
+  }
 }
