@@ -1,0 +1,40 @@
+{
+  "name": "debounce",
+  "version": "1.0.0",
+  "description": "Converts a function into debounced or throttled one. Supports useful options for all needs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx tsc",
+    "ts:watch": "npx tsc -w",
+    "test:watch": "npx mocha -w --slow 1000 --timeout 3000 --jobs 20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Oriery/debounce.git"
+  },
+  "keywords": [
+    "debounce",
+    "throttle",
+    "repeated",
+    "call"
+  ],
+  "author": "Oriery",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Oriery/debounce/issues"
+  },
+  "homepage": "https://github.com/Oriery/debounce#readme",
+  "devDependencies": {
+    "@types/node": "^20.2.5",
+    "chai": "^4.3.7",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^10.2.0",
+    "mock-require": "^3.0.3",
+    "rewire": "^6.0.0",
+    "sinon": "^15.1.0",
+    "sinon-chai": "^3.7.0",
+    "supertest": "^6.3.3",
+    "typescript": "^5.0.4"
+  }
+}
