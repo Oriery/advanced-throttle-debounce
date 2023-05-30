@@ -220,7 +220,7 @@ describe("end-user test", function () {
     })
   })
 
-  describe('passing different arguments and different context (this)', function () {
+  describe('passing arguments', function () {
 
     this.beforeEach(() => {
       debouncedTestFunc = controller.debounce(testFunc, {
@@ -228,144 +228,181 @@ describe("end-user test", function () {
       })
     })
 
-    it('should differentiate between different arguments by default', async () => {
-      debouncedTestFunc(1)
-      debouncedTestFunc(2)
-      debouncedTestFunc(1)
-      debouncedTestFunc(2)
-      debouncedTestFunc('1')
-      debouncedTestFunc('1', { a: 1 })
+    it('should LEADING CALL a function with the correct arguments', async () => {
+      debouncedTestFunc(1, '2', { a: 3 }, [4, 5])
 
-      expect(testFunc).to.have.callCount(4)
+      expect(testFunc).to.have.been.calledWith(1, '2', { a: 3 }, [4, 5])
     })
 
-    it('should differentiate between different arguments if "differentArgs" is true', async () => {
+    it('should TRAILING CALL a function with the correct arguments', async () => {
       debouncedTestFunc = controller.debounce(testFunc, {
         wait: NORMAL_WAIT,
-        differentArgs: true
+        trailing: true,
+        leading: false
       })
 
-      debouncedTestFunc(1)
-      debouncedTestFunc(2)
+      debouncedTestFunc(1, '2', { a: 3 }, [4, 5])
 
-      expect(testFunc).to.have.callCount(2)
+      await sleep(LONGER_THAN_WAIT)
+      expect(testFunc).to.have.been.calledWith(1, '2', { a: 3 }, [4, 5])
     })
 
-    it('should NOT differentiate between different arguments if "differentArgs" is false', async () => {
-      debouncedTestFunc = controller.debounce(testFunc, {
-        wait: NORMAL_WAIT,
-        differentArgs: false
+    describe('passing different arguments and different context (this)', function () {
+
+      it('should differentiate between different arguments by default', async () => {
+        debouncedTestFunc(1)
+        debouncedTestFunc(2)
+        debouncedTestFunc(1)
+        debouncedTestFunc(2)
+        debouncedTestFunc('1')
+        debouncedTestFunc('1', { a: 1 })
+  
+        expect(testFunc).to.have.callCount(4)
       })
-
-      debouncedTestFunc(1)
-      debouncedTestFunc(2)
-      debouncedTestFunc(1)
-      debouncedTestFunc(2)
-      debouncedTestFunc('1')
-      debouncedTestFunc('1', { a: 1 })
-
-      expect(testFunc).to.have.callCount(1)
-    })
-
-    it('should differentiate between different context (this) by default', async () => {
-      const obj1 = { a: 1 }
-      const obj2 = { a: 2 }
-
-      debouncedTestFunc.call(obj1)
-      debouncedTestFunc.call(obj2)
-      debouncedTestFunc.call(obj1)
-      debouncedTestFunc.call(obj2)
-
-      expect(testFunc).to.have.callCount(2)
-    })
-
-    it('should differentiate between different context (this) if "differentThis" is true', async () => {
-      debouncedTestFunc = controller.debounce(testFunc, {
-        wait: NORMAL_WAIT,
-        differentThis: true
-      })
-
-      debouncedTestFunc.call({ a: 1 })
-      debouncedTestFunc.call({ a: 2 })
-
-      expect(testFunc).to.have.callCount(2)
-    })
-
-    it('should NOT differentiate between different context (this) if "differentThis" is false', async () => {
-      debouncedTestFunc = controller.debounce(testFunc, {
-        wait: NORMAL_WAIT,
-        differentThis: false
-      })
-
-      debouncedTestFunc.call({ a: 1 })
-      debouncedTestFunc.call({ a: 2 })
-      debouncedTestFunc.call({ a: 1 })
-      debouncedTestFunc.call({ a: 2 })
-
-      expect(testFunc).to.have.callCount(1)
-    })
-
-    describe('differentiation between equal but not the same context', function () {
-
-      it('should NOT differentiate between truly same context', async () => {
-        const obj = { a: 1 }
-
-        debouncedTestFunc.call(obj)
-        debouncedTestFunc.call(obj)
-
-        expect(testFunc).to.have.callCount(1)
-      })
-
-      it('should differentiate between equal but not the same context by default', async () => {
-        debouncedTestFunc.call({ a: 1 })
-        debouncedTestFunc.call({ a: 1 })
-
-        expect(testFunc).to.have.callCount(2)
-      })
-
-      it('should NOT differentiate between equal but not the same context if "treatSimilarContextAsTheSame" is true', async () => {
+  
+      it('should differentiate between different arguments if "differentArgs" is true', async () => {
         debouncedTestFunc = controller.debounce(testFunc, {
           wait: NORMAL_WAIT,
-          treatSimilarContextAsTheSame: true
+          differentArgs: true
         })
-
-        debouncedTestFunc.call({ a: 1 })
-        debouncedTestFunc.call({ a: 1 })
-
-        expect(testFunc).to.have.callCount(1)
-      })
-
-    })
-
-    describe('differentiation between equal but not the same arguments', function () {
-        
-      it('should NOT differentiate between truly same arguments', async () => {
-        const obj = { a: 1 }
-        debouncedTestFunc(obj)
-        debouncedTestFunc(obj)
-
-        expect(testFunc).to.have.callCount(1)
-      })
-
-      it('should differentiate between equal but not the same arguments by default', async () => {
-        debouncedTestFunc({ a: 1 })
-        debouncedTestFunc({ a: 1 })
-
+  
+        debouncedTestFunc(1)
+        debouncedTestFunc(2)
+  
         expect(testFunc).to.have.callCount(2)
       })
-
-      it('should NOT differentiate between equal but not the same arguments if "treatSimilarArgsAsTheSame" is true', async () => {
+  
+      it('should NOT differentiate between different arguments if "differentArgs" is false', async () => {
         debouncedTestFunc = controller.debounce(testFunc, {
           wait: NORMAL_WAIT,
-          treatSimilarArgsAsTheSame: true
+          differentArgs: false
         })
-
-        debouncedTestFunc({ a: 1 })
-        debouncedTestFunc({ a: 1 })
-
+  
+        debouncedTestFunc(1)
+        debouncedTestFunc(2)
+        debouncedTestFunc(1)
+        debouncedTestFunc(2)
+        debouncedTestFunc('1')
+        debouncedTestFunc('1', { a: 1 })
+  
+        expect(testFunc).to.have.callCount(1)
+      })
+  
+      it('should differentiate between different context (this) by default', async () => {
+        const obj1 = { a: 1 }
+        const obj2 = { a: 2 }
+  
+        debouncedTestFunc.call(obj1)
+        debouncedTestFunc.call(obj2)
+        debouncedTestFunc.call(obj1)
+        debouncedTestFunc.call(obj2)
+  
+        expect(testFunc).to.have.callCount(2)
+      })
+  
+      it('should differentiate between different context (this) if "differentThis" is true', async () => {
+        debouncedTestFunc = controller.debounce(testFunc, {
+          wait: NORMAL_WAIT,
+          differentThis: true
+        })
+  
+        debouncedTestFunc.call({ a: 1 })
+        debouncedTestFunc.call({ a: 2 })
+  
+        expect(testFunc).to.have.callCount(2)
+      })
+  
+      it('should NOT differentiate between different context (this) if "differentThis" is false', async () => {
+        debouncedTestFunc = controller.debounce(testFunc, {
+          wait: NORMAL_WAIT,
+          differentThis: false
+        })
+  
+        debouncedTestFunc.call({ a: 1 })
+        debouncedTestFunc.call({ a: 2 })
+        debouncedTestFunc.call({ a: 1 })
+        debouncedTestFunc.call({ a: 2 })
+  
         expect(testFunc).to.have.callCount(1)
       })
 
+      it('should TRAILING CALL a function only with last attempted arguments if "differentArgs" is false', async () => {
+        debouncedTestFunc = controller.debounce(testFunc, {
+          wait: NORMAL_WAIT,
+          trailing: true,
+          leading: false,
+          differentArgs: false
+        })
+  
+        debouncedTestFunc(1)
+        debouncedTestFunc(2)
+  
+        await sleep(LONGER_THAN_WAIT)
+        expect(testFunc).to.not.have.been.calledWith(1)
+        expect(testFunc).to.have.been.calledWith(2)
+      })
+  
+      describe('differentiation between equal but not the same context', function () {
+  
+        it('should NOT differentiate between truly same context', async () => {
+          const obj = { a: 1 }
+  
+          debouncedTestFunc.call(obj)
+          debouncedTestFunc.call(obj)
+  
+          expect(testFunc).to.have.callCount(1)
+        })
+  
+        it('should differentiate between equal but not the same context by default', async () => {
+          debouncedTestFunc.call({ a: 1 })
+          debouncedTestFunc.call({ a: 1 })
+  
+          expect(testFunc).to.have.callCount(2)
+        })
+  
+        it('should NOT differentiate between equal but not the same context if "treatSimilarContextAsTheSame" is true', async () => {
+          debouncedTestFunc = controller.debounce(testFunc, {
+            wait: NORMAL_WAIT,
+            treatSimilarContextAsTheSame: true
+          })
+  
+          debouncedTestFunc.call({ a: 1 })
+          debouncedTestFunc.call({ a: 1 })
+  
+          expect(testFunc).to.have.callCount(1)
+        })
+  
+      })
+  
+      describe('differentiation between equal but not the same arguments', function () {
+          
+        it('should NOT differentiate between truly same arguments', async () => {
+          const obj = { a: 1 }
+          debouncedTestFunc(obj)
+          debouncedTestFunc(obj)
+  
+          expect(testFunc).to.have.callCount(1)
+        })
+  
+        it('should differentiate between equal but not the same arguments by default', async () => {
+          debouncedTestFunc({ a: 1 })
+          debouncedTestFunc({ a: 1 })
+  
+          expect(testFunc).to.have.callCount(2)
+        })
+  
+        it('should NOT differentiate between equal but not the same arguments if "treatSimilarArgsAsTheSame" is true', async () => {
+          debouncedTestFunc = controller.debounce(testFunc, {
+            wait: NORMAL_WAIT,
+            treatSimilarArgsAsTheSame: true
+          })
+  
+          debouncedTestFunc({ a: 1 })
+          debouncedTestFunc({ a: 1 })
+  
+          expect(testFunc).to.have.callCount(1)
+        })
+      })
     })
   })
 })
