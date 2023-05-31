@@ -8,9 +8,11 @@
   "scripts": {
     "dev": "npm run ts:watch & npm run test:watch",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx tsc",
-    "ts:watch": "npx tsc -w",
-    "test:watch": "npx mocha -w --slow 200 --timeout 2000 --parallel",
+    "build": "tsc",
+    "test:output-to-html": "mocha --reporter mochawesome --reporter-options reportDir=test/output,reportFilename=tests-output",
+    "test:output-to-md": "mocha --reporter ./tests-reporter.js > test/README.md",
+    "ts:watch": "tsc -w",
+    "test:watch": "mocha -w --slow 200 --timeout 2000 --parallel",
     "build-and-publish": "npm run build && npm publish --access public"
   },
   "repository": {
@@ -31,6 +33,7 @@
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "mocha": "^10.2.0",
+    "mochawesome": "^7.1.3",
     "mock-require": "^3.0.3",
     "rewire": "^6.0.0",
     "sinon": "^15.1.0",

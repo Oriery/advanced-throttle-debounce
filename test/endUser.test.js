@@ -24,8 +24,6 @@ const LONGER_THAN_WAIT = 30
 let testFunc
 let debouncedTestFunc
 
-console.log("running endUser.test.js ...")
-
 beforeEach(() => {
   sandbox.restore()
   controller = rewire("../index.js")

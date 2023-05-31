@@ -8,8 +8,8 @@
 // DIVIDING CALL - the call which divides too long groups of attempts into smaller groups by the 'maxWait' time.
 
 export type Options = {
-  leading?: boolean; // should the function be called on the leading edge. Default: true
-  trailing?: boolean; // should the function be called on the trailing edge. Default: false
+  leading?: boolean; // should the function be called on the leading edge. Default: false
+  trailing?: boolean; // should the function be called on the trailing edge. Default: true
   wait?: number; // the time between attempts in milliseconds which is deviding the attempts into groups. Default: 1000
   maxWait?: number; // the maximum length of the attempt group. Default: Infinity
   differentArgs?: boolean; // should the attempt be considered as different if the arguments are different. Default: true
