@@ -1,5 +1,4 @@
 var mocha = require('mocha');
-var fs = require('fs');
 
 module.exports = MarkdownReporter;
 

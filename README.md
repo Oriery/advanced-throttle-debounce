@@ -1,19 +1,23 @@
 # advanced-throttle-debounce
 
-Converts a function into debounced or throttled one
+Converts a function into debounced or throttled one so that it is not called too often.
 
-- Well tested
-- Supports both sync and async functions returning a value
-- Can differentiate attempts by arguments, 'this' context, similar 'this' context, similar arguments
-- Rich options for all needs
-- Typescript support
+This library:
+
+- is well tested;
+- supports both sync and async functions;
+- functions can return a value or throw an error;
+- can differentiate attempts by arguments, 'this' context, similar 'this' context, similar arguments;
+- has rich options for all your needs (otherwise create an issue);
+- supports TypeScript;
+- does not have any dependencies.
 
 ## Terminology used in this documentation
 
 - debounce (debounced) - used interchangeably with 'throttle' unless specified otherwise.
 - ATTEMPT - an attempt to call a debounced function.
 - CALL - a real call to function.
-- ATTEMPT GROUP - a group of attempts that are divided by the 'wait' time and sometimes by the 'maxWait' time.
+- ATTEMPT GROUP - a group of attempts that are divided by the 'wait' time and sometimes forced to divide because of the 'maxWait' time.
 - LEADING CALL - the call in the beginning of an attempt group (simultaneously with LEADING ATTEMPT).
 - TRAILING CALL - the call in the end of an attempt group. 'wait' time after the last ATTEMPT in the group.
 - DIVIDING CALL - the call which divides too long groups of attempts into smaller groups by the 'maxWait' time (if it is provided in options).
@@ -88,76 +92,22 @@ functionToDebounce called
 
 As you can see, the function was called twice instead of thrice. Debouncer grouped the first and the third calls into one ATTEMPT GROUP and called the function only once. The second call was placed into another ATTEMPT GROUP because of different arguments (this is the default behaviour which can be changed by providing options).
 
+## API
+
+### `debounce(func, options)`
+
+Creates a debounced function that delays invoking func until after "wait" milliseconds have elapsed since the last time the debounced function was invoked. This descibes the default behaviour which can be changed by providing options.
+
 ## Options
 
-### leading
-
-Type: `boolean`
-
-Default: `false`
-
-Should the function be called on the leading edge.
-
-### trailing
-
-Type: `boolean`
-
-Default: `true`
-
-Should the function be called on the trailing edge.
-
-### wait
-
-Type: `number`
-
-Default: `1000`
-
-The time between attempts in milliseconds which is deviding the attempts into groups.
-
-### maxWait
-
-Type: `number`
-
-Default: `Infinity`
-
-The maximum length of the attempt group.
-
-### differentArgs
-
-Type: `boolean`
-
-Default: `true`
-
-Should the attempt be considered as different if the arguments are different.
-
-### differentThis
-
-Type: `boolean`
-
-Default: `true`
-
-Should the attempt be considered as different if the 'this' context is different.
-
-### treatSimilarContextAsTheSame
-
-Type: `boolean`
-
-Default: `false`
-
-Should the attempt be considered as different if the 'this' context is similar.
-
-### treatSimilarArgsAsTheSame
-
-Type: `boolean`
-
-Default: `false`
-
-Should the attempt be considered as different if objects in arguments are similar but not the same.
-
-### forceDoubleCallEvenIfAttemptedOnlyOnes
-
-Type: `boolean`
-
-Default: `false`
-
-Should the function be called twice if it was attempted only ones. By default if both 'leading' and 'trailing' are true, than only LEADING CALL will be called if there was only one attempt.
+option | type | default | description
+--- | --- | --- | ---
+`leading` | boolean | `false` | Should the function be called on the leading edge?
+`trailing` | boolean | `true` | Should the function be called on the trailing edge?
+`wait` | number | `1000` | The time in ms between attempts in milliseconds which is deviding the attempts into groups.
+`maxWait` | number | `Infinity` | The maximum length of the attempt group in ms.
+`differentArgs` | boolean | `true` | Should the attempt be considered as different if the arguments are different?
+`differentThis` | boolean | `true` | Should the attempt be considered as different if the 'this' context is different?
+`treatSimilarContextAsTheSame` | boolean | `false` | Should the attempt be considered as different if the 'this' context is similar?
+`treatSimilarArgsAsTheSame` | boolean | `false` | Should the attempt be considered as different if objects in arguments are similar but not the same?
+`forceDoubleCallEvenIfAttemptedOnlyOnes` | boolean | `false` | Should the function be called twice if it was attempted only ones. By default if both 'leading' and 'trailing' are true, than only LEADING CALL will be called if there was only one attempt?

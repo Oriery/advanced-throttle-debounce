@@ -1,6 +1,6 @@
 // ATTEMPT - an attempt to call a debounced function.
 // CALL - a real call to function.
-// ATTEMPT GROUP - a group of attempts that are divided by the 'wait' time and sometimes by the 'maxWait' time.
+// ATTEMPT GROUP - a group of attempts that are divided by the 'wait' time and sometimes forced to divide because of the 'maxWait' time.
 // LEADING ATTEMPT - the first attempt in the attempt group.
 // TRAILING ATTEMPT - the last attempt in the attempt group.
 // LEADING CALL - the call in the beginning of an attempt group (simultaneously with LEADING ATTEMPT).
