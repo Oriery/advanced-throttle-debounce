@@ -1,6 +1,8 @@
 {
   "name": "debounce",
   "version": "1.0.0",
+  "author": "Oriery (Aleksandr Panev) <aleksandr.panev.2002@gmail.com>",
+  "license": "ISC",
   "description": "Converts a function into debounced or throttled one. Supports useful options for all needs",
   "main": "index.js",
   "scripts": {
@@ -17,11 +19,8 @@
   "keywords": [
     "debounce",
     "throttle",
-    "repeated",
-    "call"
+    "repeated"
   ],
-  "author": "Oriery",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/Oriery/debounce/issues"
   },
