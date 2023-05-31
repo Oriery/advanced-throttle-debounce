@@ -1,6 +1,6 @@
 {
   "name": "advanced-throttle-debounce",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Oriery (Aleksandr Panev) <aleksandr.panev.2002@gmail.com>",
   "license": "ISC",
   "description": "Advanced debounce/throttle with many useful features.",

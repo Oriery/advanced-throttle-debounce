@@ -19,7 +19,7 @@ export type Options = {
   forceDoubleCallEvenIfAttemptedOnlyOnes?: boolean; // should the function be called twice if it was attempted only ones. By default if both 'leading' and 'trailing' are true, than only LEADING CALL will be called if there was only one attempt. Default: false
 };
 
-export type ElementOfMap = {
+type ElementOfMap = {
   func : Function;
   timeoutForWait : NodeJS.Timeout | null;
   timeoutForMaxWait : NodeJS.Timeout | null;
