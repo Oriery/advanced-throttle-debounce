@@ -6,7 +6,7 @@ This library:
 
 - is well tested;
 - supports both sync and async functions;
-- functions can return a value or throw an error;
+- supports functions that return a value or a Promise or throw an error;
 - can differentiate attempts by arguments, 'this' context, similar 'this' context, similar arguments;
 - has rich options for all your needs (otherwise create an issue);
 - supports TypeScript;
@@ -100,14 +100,14 @@ Creates a debounced function that delays invoking func until after "wait" millis
 
 ## Options
 
-option | type | default | description
---- | --- | --- | ---
-`leading` | boolean | `false` | Should the function be called on the leading edge?
-`trailing` | boolean | `true` | Should the function be called on the trailing edge?
-`wait` | number | `1000` | The time in ms between attempts in milliseconds which is deviding the attempts into groups.
-`maxWait` | number | `Infinity` | The maximum length of the attempt group in ms.
-`differentArgs` | boolean | `true` | Should the attempt be considered as different if the arguments are different?
-`differentThis` | boolean | `true` | Should the attempt be considered as different if the 'this' context is different?
-`treatSimilarContextAsTheSame` | boolean | `false` | Should the attempt be considered as different if the 'this' context is similar?
-`treatSimilarArgsAsTheSame` | boolean | `false` | Should the attempt be considered as different if objects in arguments are similar but not the same?
-`forceDoubleCallEvenIfAttemptedOnlyOnes` | boolean | `false` | Should the function be called twice if it was attempted only ones. By default if both 'leading' and 'trailing' are true, than only LEADING CALL will be called if there was only one attempt?
+option | type, default | description
+--- | --- | ---
+`leading` | boolean, `false` | Should the function be called on the leading edge?
+`trailing` | boolean, `true` | Should the function be called on the trailing edge?
+`wait` | number, `1000` | The time in ms between attempts in milliseconds which is deviding the attempts into groups.
+`maxWait` | number, `Infinity` | The maximum length of the attempt group in ms.
+`differentArgs` | boolean, `true` | Should the attempt be considered as different if the arguments are different?
+`differentThis` | boolean, `true` | Should the attempt be considered as different if the 'this' context is different?
+`treatSimilar ContextAsTheSame` (one long word) | boolean, `false` | Should the attempt be considered as different if the 'this' context is similar?
+`treatSimilar ArgsAsTheSame` (one long word) | boolean, `false` | Should the attempt be considered as different if objects in arguments are similar but not the same?
+`forceDoubleCall EvenIfAttempted OnlyOnes` (one long word) | boolean, `false` | Should the function be called twice if it was attempted only ones. By default if both 'leading' and 'trailing' are true, than only LEADING CALL will be called if there was only one attempt?

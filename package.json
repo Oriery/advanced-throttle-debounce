@@ -1,6 +1,6 @@
 {
   "name": "advanced-throttle-debounce",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "author": "Oriery (Aleksandr Panev) <aleksandr.panev.2002@gmail.com>",
   "license": "ISC",
   "description": "Advanced debounce/throttle with many useful features.",
@@ -22,7 +22,12 @@
   "keywords": [
     "debounce",
     "throttle",
-    "repeated"
+    "advanced",
+    "repeated",
+    "function",
+    "invoke",
+    "accumulate",
+    "ratelimit"
   ],
   "bugs": {
     "url": "https://github.com/Oriery/debounce/issues"
