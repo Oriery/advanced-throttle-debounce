@@ -231,7 +231,9 @@ describe("end-user test", function () {
 
     this.beforeEach(() => {
       debouncedTestFunc = controller.debounce(testFunc, {
-        wait: NORMAL_WAIT
+        wait: NORMAL_WAIT,
+        leading: true, 
+        trailing: false, 
       })
     })
 
@@ -259,7 +261,9 @@ describe("end-user test", function () {
       it('should differentiate between different arguments if "differentArgs" is true', async () => {
         debouncedTestFunc = controller.debounce(testFunc, {
           wait: NORMAL_WAIT,
-          differentArgs: true
+          differentArgs: true,
+          leading: true, 
+          trailing: false, 
         })
   
         debouncedTestFunc(1)
@@ -271,7 +275,9 @@ describe("end-user test", function () {
       it('should NOT differentiate between different arguments if "differentArgs" is false', async () => {
         debouncedTestFunc = controller.debounce(testFunc, {
           wait: NORMAL_WAIT,
-          differentArgs: false
+          differentArgs: false,
+          leading: true, 
+          trailing: false, 
         })
   
         debouncedTestFunc(1)
@@ -287,7 +293,9 @@ describe("end-user test", function () {
       it('should differentiate between different context (this) if "differentThis" is true', async () => {
         debouncedTestFunc = controller.debounce(testFunc, {
           wait: NORMAL_WAIT,
-          differentThis: true
+          differentThis: true,
+          leading: true, 
+          trailing: false, 
         })
   
         debouncedTestFunc.call({ a: 1 })
@@ -299,7 +307,9 @@ describe("end-user test", function () {
       it('should NOT differentiate between different context (this) if "differentThis" is false', async () => {
         debouncedTestFunc = controller.debounce(testFunc, {
           wait: NORMAL_WAIT,
-          differentThis: false
+          differentThis: false,
+          leading: true, 
+          trailing: false, 
         })
   
         debouncedTestFunc.call({ a: 1 })
@@ -340,7 +350,9 @@ describe("end-user test", function () {
         it('should NOT differentiate between equal but not the same context if "treatSimilarContextAsTheSame" is true', async () => {
           debouncedTestFunc = controller.debounce(testFunc, {
             wait: NORMAL_WAIT,
-            treatSimilarContextAsTheSame: true
+            treatSimilarContextAsTheSame: true,
+            leading: true, 
+            trailing: false, 
           })
   
           debouncedTestFunc.call({ a: 1 })
@@ -352,7 +364,9 @@ describe("end-user test", function () {
         it('should differentiate between equal but not the same context if "treatSimilarContextAsTheSame" is false', async () => {
           debouncedTestFunc = controller.debounce(testFunc, {
             wait: NORMAL_WAIT,
-            treatSimilarContextAsTheSame: false
+            treatSimilarContextAsTheSame: false,
+            leading: true, 
+            trailing: false, 
           })
   
           debouncedTestFunc.call({ a: 1 })
@@ -376,7 +390,9 @@ describe("end-user test", function () {
         it('should NOT differentiate between equal but not the same arguments if "treatSimilarArgsAsTheSame" is true', async () => {
           debouncedTestFunc = controller.debounce(testFunc, {
             wait: NORMAL_WAIT,
-            treatSimilarArgsAsTheSame: true
+            treatSimilarArgsAsTheSame: true,
+            leading: true, 
+            trailing: false, 
           })
   
           debouncedTestFunc({ a: 1 })
@@ -388,7 +404,9 @@ describe("end-user test", function () {
         it('should differentiate between equal but not the same arguments if "treatSimilarArgsAsTheSame" is false', async () => {
           debouncedTestFunc = controller.debounce(testFunc, {
             wait: NORMAL_WAIT,
-            treatSimilarArgsAsTheSame: false
+            treatSimilarArgsAsTheSame: false,
+            leading: true, 
+            trailing: false, 
           })
   
           debouncedTestFunc({ a: 1 })
@@ -575,6 +593,8 @@ describe("end-user test", function () {
     this.beforeEach(() => {
       debouncedTestFunc = controller.debounce(testFunc, {
         wait: NORMAL_WAIT,
+        leading: true, 
+        trailing: false,
       })
     })
 
@@ -615,18 +635,21 @@ describe("end-user test", function () {
       expect(testFunc).to.have.callCount(2)
     })
 
-    it('should call LEADING CALL by default', async () => {
+    it('should NOT call LEADING CALL by default', async () => {
+        debouncedTestFunc = controller.debounce(testFunc, {
+        wait: NORMAL_WAIT,
+      })
+
       debouncedTestFunc()
       debouncedTestFunc()
 
-      expect(testFunc).to.have.been.calledOnce
+      expect(testFunc).to.have.not.been.called
     })
 
-    it('should NOT call TRAILING CALL by default', async () => {
+    it('should call TRAILING CALL by default', async () => {
       debouncedTestFunc()
       debouncedTestFunc()
 
-      expect(testFunc).to.have.been.calledOnce
       await sleep(LONGER_THAN_WAIT)
       expect(testFunc).to.have.been.calledOnce
     })
@@ -651,7 +674,10 @@ describe("end-user test", function () {
       this.slow(EXPECTED_DEFAULT_WAIT * 2.1)
 
       this.beforeEach(() => {
-        debouncedTestFunc = controller.debounce(testFunc)
+        debouncedTestFunc = controller.debounce(testFunc, {
+          leading: true,
+          trailing: false,
+        })
       })
 
       it('more than 970', async () => {

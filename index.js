@@ -10,8 +10,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.debounce = void 0;
 const defaultOptions = {
-    leading: true,
-    trailing: false,
+    leading: false,
+    trailing: true,
     wait: 1000,
     maxWait: Infinity,
     differentArgs: true,

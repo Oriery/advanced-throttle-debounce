@@ -29,8 +29,8 @@ export type ElementOfMap = {
 };
 
 const defaultOptions : Options = {
-  leading: true,
-  trailing: false,
+  leading: false,
+  trailing: true,
   wait: 1000,
   maxWait: Infinity,
   differentArgs: true,
