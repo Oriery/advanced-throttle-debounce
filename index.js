@@ -21,6 +21,7 @@ const defaultOptions = {
     forceDoubleCallEvenIfAttemptedOnlyOnes: false
 };
 // TODO: ability to change default options
+// TODO: ability to cancel the trailing call before it was called
 function debounce(func, options = {}) {
     options = Object.assign({}, defaultOptions, options);
     checkOptions(options);

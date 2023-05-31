@@ -41,6 +41,7 @@ const defaultOptions : Options = {
 };
 
 // TODO: ability to change default options
+// TODO: ability to cancel the trailing call before it was called
 
 export function debounce(func : Function , options : Options = {}) {
   options = Object.assign({}, defaultOptions, options);

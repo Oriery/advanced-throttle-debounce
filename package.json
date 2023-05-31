@@ -1,16 +1,17 @@
 {
-  "name": "debounce",
+  "name": "advanced-throttle-debounce",
   "version": "1.0.0",
   "author": "Oriery (Aleksandr Panev) <aleksandr.panev.2002@gmail.com>",
   "license": "ISC",
-  "description": "Converts a function into debounced or throttled one. Supports useful options for all needs",
+  "description": "Advanced debounce/throttle with many useful features.",
   "main": "index.js",
   "scripts": {
     "dev": "npm run ts:watch & npm run test:watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
     "ts:watch": "npx tsc -w",
-    "test:watch": "npx mocha -w --slow 200 --timeout 2000 --parallel"
+    "test:watch": "npx mocha -w --slow 200 --timeout 2000 --parallel",
+    "build-and-publish": "npm run build && npm publish --access public"
   },
   "repository": {
     "type": "git",
@@ -36,5 +37,9 @@
     "sinon-chai": "^3.7.0",
     "supertest": "^6.3.3",
     "typescript": "^5.0.4"
-  }
+  },
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ]
 }
