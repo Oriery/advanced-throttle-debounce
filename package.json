@@ -4,10 +4,11 @@
   "description": "Converts a function into debounced or throttled one. Supports useful options for all needs",
   "main": "index.js",
   "scripts": {
+    "dev": "npm run ts:watch & npm run test:watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
     "ts:watch": "npx tsc -w",
-    "test:watch": "npx mocha -w --slow 1000 --timeout 3000 --parallel --jobs 50"
+    "test:watch": "npx mocha -w --slow 200 --timeout 2000 --parallel"
   },
   "repository": {
     "type": "git",

@@ -17,9 +17,9 @@ let controller = require("../index.js")
 
 const sandbox = sinon.createSandbox() // for resetting all mocks/stubs/etc. after each test
 
-const NORMAL_WAIT = 100
-const FASTER_THAN_WAIT = 50
-const LONGER_THAN_WAIT = 150
+const NORMAL_WAIT = 20
+const FASTER_THAN_WAIT = 10
+const LONGER_THAN_WAIT = 30
 
 let testFunc
 let debouncedTestFunc
@@ -54,7 +54,7 @@ describe("end-user test", function () {
       debouncedTestFunc()
 
       expect(testFunc).to.have.been.calledOnce
-      sleep(LONGER_THAN_WAIT)
+      await sleep(LONGER_THAN_WAIT)
       expect(testFunc).to.have.been.calledOnce
     })
 
@@ -183,7 +183,14 @@ describe("end-user test", function () {
 
     describe('only one attempt is made', function () {
 
-      it('should only call LEADING CALL when one attempt is made (as oppose to calling both LEADING and TRAILING)', async () => {
+      it('should only call LEADING CALL when one attempt is made (as oppose to calling both LEADING and TRAILING) if "forceDoubleCallEvenIfAttemptedOnlyOnes" is false', async () => {
+        debouncedTestFunc = controller.debounce(testFunc, {
+          leading: true,
+          trailing: true,
+          wait: NORMAL_WAIT,
+          forceDoubleCallEvenIfAttemptedOnlyOnes: false
+        })
+
         debouncedTestFunc()
 
         expect(testFunc).to.have.been.calledOnce
@@ -191,7 +198,7 @@ describe("end-user test", function () {
         expect(testFunc).to.have.been.calledOnce
       })
 
-      it('should call LEADING CALL and TRAILING CALL ones each when one attempt is made if "forceDoubleCallEvenIfAttemptedOnlyOnes" is specified', async () => {
+      it('should call LEADING CALL and TRAILING CALL ones each when one attempt is made if "forceDoubleCallEvenIfAttemptedOnlyOnes" is true', async () => {
         debouncedTestFunc = controller.debounce(testFunc, {
           leading: true,
           trailing: true,
@@ -248,17 +255,6 @@ describe("end-user test", function () {
     })
 
     describe('passing different arguments and different context (this)', function () {
-
-      it('should differentiate between different arguments by default', async () => {
-        debouncedTestFunc(1)
-        debouncedTestFunc(2)
-        debouncedTestFunc(1)
-        debouncedTestFunc(2)
-        debouncedTestFunc('1')
-        debouncedTestFunc('1', { a: 1 })
-  
-        expect(testFunc).to.have.callCount(4)
-      })
   
       it('should differentiate between different arguments if "differentArgs" is true', async () => {
         debouncedTestFunc = controller.debounce(testFunc, {
@@ -286,18 +282,6 @@ describe("end-user test", function () {
         debouncedTestFunc('1', { a: 1 })
   
         expect(testFunc).to.have.callCount(1)
-      })
-  
-      it('should differentiate between different context (this) by default', async () => {
-        const obj1 = { a: 1 }
-        const obj2 = { a: 2 }
-  
-        debouncedTestFunc.call(obj1)
-        debouncedTestFunc.call(obj2)
-        debouncedTestFunc.call(obj1)
-        debouncedTestFunc.call(obj2)
-  
-        expect(testFunc).to.have.callCount(2)
       })
   
       it('should differentiate between different context (this) if "differentThis" is true', async () => {
@@ -353,13 +337,6 @@ describe("end-user test", function () {
           expect(testFunc).to.have.callCount(1)
         })
   
-        it('should differentiate between equal but not the same context by default', async () => {
-          debouncedTestFunc.call({ a: 1 })
-          debouncedTestFunc.call({ a: 1 })
-  
-          expect(testFunc).to.have.callCount(2)
-        })
-  
         it('should NOT differentiate between equal but not the same context if "treatSimilarContextAsTheSame" is true', async () => {
           debouncedTestFunc = controller.debounce(testFunc, {
             wait: NORMAL_WAIT,
@@ -370,6 +347,18 @@ describe("end-user test", function () {
           debouncedTestFunc.call({ a: 1 })
   
           expect(testFunc).to.have.callCount(1)
+        })
+
+        it('should differentiate between equal but not the same context if "treatSimilarContextAsTheSame" is false', async () => {
+          debouncedTestFunc = controller.debounce(testFunc, {
+            wait: NORMAL_WAIT,
+            treatSimilarContextAsTheSame: false
+          })
+  
+          debouncedTestFunc.call({ a: 1 })
+          debouncedTestFunc.call({ a: 1 })
+  
+          expect(testFunc).to.have.callCount(2)
         })
   
       })
@@ -384,13 +373,6 @@ describe("end-user test", function () {
           expect(testFunc).to.have.callCount(1)
         })
   
-        it('should differentiate between equal but not the same arguments by default', async () => {
-          debouncedTestFunc({ a: 1 })
-          debouncedTestFunc({ a: 1 })
-  
-          expect(testFunc).to.have.callCount(2)
-        })
-  
         it('should NOT differentiate between equal but not the same arguments if "treatSimilarArgsAsTheSame" is true', async () => {
           debouncedTestFunc = controller.debounce(testFunc, {
             wait: NORMAL_WAIT,
@@ -402,6 +384,19 @@ describe("end-user test", function () {
   
           expect(testFunc).to.have.callCount(1)
         })
+
+        it('should differentiate between equal but not the same arguments if "treatSimilarArgsAsTheSame" is false', async () => {
+          debouncedTestFunc = controller.debounce(testFunc, {
+            wait: NORMAL_WAIT,
+            treatSimilarArgsAsTheSame: false
+          })
+  
+          debouncedTestFunc({ a: 1 })
+          debouncedTestFunc({ a: 1 })
+  
+          expect(testFunc).to.have.callCount(2)
+        })
+
       })
     })
   })
@@ -478,7 +473,7 @@ describe("end-user test", function () {
       })
     })
 
-    it('should return a Promise to each attempt when LEADING CALL', async () => {
+    it('should return a resolved Promise to each attempt when LEADING CALL', async () => {
       const promise1 = debouncedTestFunc()
       const promise2 = debouncedTestFunc()
 
@@ -488,7 +483,7 @@ describe("end-user test", function () {
       expect(promise2).to.eventually.equal(returnsWhat)
     })
 
-    it('should return a Promise to each attempt when TRAILING CALL', async () => {
+    it('should return a resolved Promise to each attempt when TRAILING CALL', async () => {
       debouncedTestFunc = controller.debounce(testFunc, {
         wait: NORMAL_WAIT,
         trailing: true,
@@ -505,7 +500,7 @@ describe("end-user test", function () {
       expect(promise2).to.eventually.equal(returnsWhat)
     })
 
-    it('should work properly with erroring sync functions', async () => {
+    it('should return a rejected Promise when sync function thrown error', async () => {
       const error = new Error('error')
       testFunc = sandbox.stub().throws(error)
 
@@ -524,6 +519,161 @@ describe("end-user test", function () {
     })
 
   })
+
+  describe('should remove group of attempts after "maxWait" has passed (new call after maxWait has passed will be in separate group)', function () {
+
+    // There is no good way to test whether maxWait is Infinity by default
+
+    it('should LEADING CALL in old and new group', async () => {
+      debouncedTestFunc = controller.debounce(testFunc, {
+        wait: NORMAL_WAIT,
+        maxWait: 2 * NORMAL_WAIT,
+        leading: true,
+        trailing: false
+      })
+
+      debouncedTestFunc()
+      await sleep(NORMAL_WAIT / 2)
+      debouncedTestFunc()
+      await sleep(NORMAL_WAIT / 2)
+      debouncedTestFunc()
+      await sleep(NORMAL_WAIT / 2)
+      debouncedTestFunc()
+      await sleep(NORMAL_WAIT / 2)
+      debouncedTestFunc()
+
+      await sleep(LONGER_THAN_WAIT)
+      expect(testFunc).to.have.been.calledTwice
+    })
+
+    it('should TRAILING CALL in old and new group', async () => {
+      debouncedTestFunc = controller.debounce(testFunc, {
+        wait: NORMAL_WAIT,
+        maxWait: 2 * NORMAL_WAIT,
+        leading: false,
+        trailing: true
+      })
+
+      debouncedTestFunc()
+      await sleep(NORMAL_WAIT / 2)
+      debouncedTestFunc()
+      await sleep(NORMAL_WAIT / 2)
+      debouncedTestFunc()
+      await sleep(NORMAL_WAIT / 2)
+      debouncedTestFunc()
+      await sleep(NORMAL_WAIT / 2)
+      debouncedTestFunc()
+
+      await sleep(LONGER_THAN_WAIT)
+      expect(testFunc).to.have.been.calledTwice
+    })
+
+  })
+
+  describe('defaults', function () {
+
+    this.beforeEach(() => {
+      debouncedTestFunc = controller.debounce(testFunc, {
+        wait: NORMAL_WAIT,
+      })
+    })
+
+    it('should differentiate between different arguments by default', async () => {
+      debouncedTestFunc(1)
+      debouncedTestFunc(2)
+      debouncedTestFunc(1)
+      debouncedTestFunc(2)
+      debouncedTestFunc('1')
+      debouncedTestFunc('1', { a: 1 })
+
+      expect(testFunc).to.have.callCount(4)
+    })
+
+    it('should differentiate between different context (this) by default', async () => {
+      const obj1 = { a: 1 }
+      const obj2 = { a: 2 }
+
+      debouncedTestFunc.call(obj1)
+      debouncedTestFunc.call(obj2)
+      debouncedTestFunc.call(obj1)
+      debouncedTestFunc.call(obj2)
+
+      expect(testFunc).to.have.callCount(2)
+    })
+    
+    it('should differentiate between equal but not the same context by default', async () => {
+      debouncedTestFunc.call({ a: 1 })
+      debouncedTestFunc.call({ a: 1 })
+
+      expect(testFunc).to.have.callCount(2)
+    })
+
+    it('should differentiate between equal but not the same arguments by default', async () => {
+      debouncedTestFunc({ a: 1 })
+      debouncedTestFunc({ a: 1 })
+
+      expect(testFunc).to.have.callCount(2)
+    })
+
+    it('should call LEADING CALL by default', async () => {
+      debouncedTestFunc()
+      debouncedTestFunc()
+
+      expect(testFunc).to.have.been.calledOnce
+    })
+
+    it('should NOT call TRAILING CALL by default', async () => {
+      debouncedTestFunc()
+      debouncedTestFunc()
+
+      expect(testFunc).to.have.been.calledOnce
+      await sleep(LONGER_THAN_WAIT)
+      expect(testFunc).to.have.been.calledOnce
+    })
+
+    it('should only call LEADING CALL when one attempt is made (as oppose to calling both LEADING and TRAILING) by default', async () => {
+      debouncedTestFunc = controller.debounce(testFunc, {
+        wait: NORMAL_WAIT,
+        trailing: true,
+        leading: true,
+      })
+
+      debouncedTestFunc()
+
+      expect(testFunc).to.have.been.calledOnce
+      await sleep(LONGER_THAN_WAIT)
+      expect(testFunc).to.have.been.calledOnce
+    })
+
+    describe('should have default "wait" of 1000', function () {
+
+      const EXPECTED_DEFAULT_WAIT = 1000;
+      this.slow(EXPECTED_DEFAULT_WAIT * 2.1)
+
+      this.beforeEach(() => {
+        debouncedTestFunc = controller.debounce(testFunc)
+      })
+
+      it('more than 970', async () => {
+        debouncedTestFunc()
+        await sleep(EXPECTED_DEFAULT_WAIT - 30)
+        debouncedTestFunc()
+
+        expect(testFunc).to.have.been.calledOnce
+      })
+
+      it('less than 1030', async () => {
+        debouncedTestFunc()
+        await sleep(EXPECTED_DEFAULT_WAIT + 30)
+        debouncedTestFunc()
+
+        expect(testFunc).to.have.been.calledTwice
+      })
+
+    })
+
+  })
+
 })
 
 async function sleep(ms) {

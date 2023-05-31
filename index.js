@@ -20,13 +20,10 @@ const defaultOptions = {
     treatSimilarArgsAsTheSame: false,
     forceDoubleCallEvenIfAttemptedOnlyOnes: false
 };
-// TODO: should work right with functions that throw errors
 // TODO: ability to change default options
 function debounce(func, options = {}) {
     options = Object.assign({}, defaultOptions, options);
     checkOptions(options);
-    let timeoutForWait = null;
-    let timoutForMaxWait = null;
     const map = new Map();
     const mapOfSimilarObjectsHashes = new Map();
     return function () {

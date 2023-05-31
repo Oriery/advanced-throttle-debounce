@@ -40,16 +40,12 @@ const defaultOptions : Options = {
   forceDoubleCallEvenIfAttemptedOnlyOnes: false
 };
 
-// TODO: should work right with functions that throw errors
 // TODO: ability to change default options
 
 export function debounce(func : Function , options : Options = {}) {
   options = Object.assign({}, defaultOptions, options);
 
   checkOptions(options);
-
-  let timeoutForWait : number | null = null;
-  let timoutForMaxWait : number | null = null;
 
   const map = new Map<string, ElementOfMap>();
   const mapOfSimilarObjectsHashes = new Map<object, string>();
