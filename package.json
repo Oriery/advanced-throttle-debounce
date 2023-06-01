@@ -1,6 +1,6 @@
 {
   "name": "advanced-throttle-debounce",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "Oriery (Aleksandr Panev) <aleksandr.panev.2002@gmail.com>",
   "license": "ISC",
   "description": "Advanced debounce/throttle with many useful features.",
@@ -13,7 +13,7 @@
     "test:output-to-md": "mocha --reporter ./tests-reporter.js > test/README.md",
     "ts:watch": "tsc -w",
     "test:watch": "mocha -w --slow 200 --timeout 2000 --parallel",
-    "build-and-publish": "npm run build && npm publish --access public"
+    "build-and-publish": "npm run build && npm run test:output-to-md && npm publish --access public"
   },
   "repository": {
     "type": "git",

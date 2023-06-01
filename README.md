@@ -53,7 +53,7 @@ npm install advanced-throttle-debounce
 ### Basic usage with default options (debounce)
 
 ``` js
-const { debounce } = require('advanced-debounce-throttle');
+const { debounce } = require('advanced-throttle-debounce');
 
 function functionToDebounce(arg1, arg2) {
   console.log('functionToDebounce called');
