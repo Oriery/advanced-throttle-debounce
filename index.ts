@@ -7,17 +7,65 @@
 // TRAILING CALL - the call in the end of an attempt group. 'wait' time after the last ATTEMPT in the group.
 // DIVIDING CALL - the call which divides too long groups of attempts into smaller groups by the 'maxWait' time.
 
+/**
+ * options that can be passed to the debounce function to change behavior of debouncing/throttling.
+ */
 export type Options = {
-  leading?: boolean; // should the function be called on the leading edge. Default: false
-  trailing?: boolean; // should the function be called on the trailing edge. Default: true
-  wait?: number; // the time between attempts in milliseconds which is deviding the attempts into groups. Default: 1000
-  maxWait?: number; // the maximum length of the attempt group. Default: Infinity
-  differentArgs?: boolean; // should the attempt be considered as different if the arguments are different. Default: true
-  differentThis?: boolean; // should the attempt be considered as different if the 'this' context is different. Default: true
-  treatSimilarContextAsTheSame?: boolean; // should the attempt be considered as different if the 'this' context is similar. Default: false
-  treatSimilarArgsAsTheSame?: boolean; // should the attempt be considered as different if objects in arguments are similar but not the same. Default: false
-  forceDoubleCallEvenIfAttemptedOnlyOnes?: boolean; // should the function be called twice if it was attempted only ones. By default if both 'leading' and 'trailing' are true, than only LEADING CALL will be called if there was only one attempt. Default: false
+  /** 
+   * Should the function be called on the leading edge.
+   * Default: false 
+   */
+  leading?: boolean;
+
+  /**
+   * Should the function be called on the trailing edge.
+   * Default: true 
+   */
+  trailing?: boolean;
+
+  /**
+   * The time between attempts in milliseconds which is dividing the attempts into groups.
+   * Default: 1000 
+   */
+  wait?: number;
+
+  /**
+   * The maximum length of the attempt group.
+   * Default: Infinity 
+   */
+  maxWait?: number;
+
+  /**
+   * Should the attempt be considered as different if the arguments are different.
+   * Default: true 
+   */
+  differentArgs?: boolean;
+
+  /**
+   * Should the attempt be considered as different if the 'this' context is different.
+   * Default: true 
+   */
+  differentThis?: boolean;
+
+  /**
+   * Should the attempt be considered as different if the 'this' context is similar.
+   * Default: false 
+   */
+  treatSimilarContextAsTheSame?: boolean;
+
+  /**
+   * Should the attempt be considered as different if objects in arguments are similar but not the same.
+   * Default: false 
+   */
+  treatSimilarArgsAsTheSame?: boolean;
+
+  /**
+   * Should the function be called twice if it was attempted only once. By default if both 'leading' and 'trailing' are true, then only LEADING CALL will be called if there was only one attempt.
+   * Default: false 
+   */
+  forceDoubleCallEvenIfAttemptedOnlyOnes?: boolean;
 };
+
 
 type ElementOfMap = {
   func : Function;

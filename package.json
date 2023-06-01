@@ -1,13 +1,13 @@
 {
   "name": "advanced-throttle-debounce",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "author": "Oriery (Aleksandr Panev) <aleksandr.panev.2002@gmail.com>",
   "license": "ISC",
   "description": "Advanced debounce/throttle with many useful features.",
   "main": "index.js",
   "scripts": {
     "dev": "npm run ts:watch & npm run test:watch",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --slow 200 --timeout 2000 --parallel",
     "build": "tsc",
     "test:output-to-html": "mocha --reporter mochawesome --reporter-options reportDir=test/output,reportFilename=tests-output",
     "test:output-to-md": "mocha --reporter ./tests-reporter.js > test/README.md",
