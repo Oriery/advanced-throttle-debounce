@@ -1,6 +1,6 @@
 {
   "name": "advanced-throttle-debounce",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "author": "Oriery (Aleksandr Panev) <aleksandr.panev.2002@gmail.com>",
   "license": "ISC",
   "description": "Advanced debounce/throttle with many useful features.",
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Oriery/debounce.git"
+    "url": "git+https://github.com/Oriery/advanced-throttle-debounce.git"
   },
   "keywords": [
     "debounce",
@@ -30,9 +30,9 @@
     "ratelimit"
   ],
   "bugs": {
-    "url": "https://github.com/Oriery/debounce/issues"
+    "url": "https://github.com/Oriery/advanced-throttle-debounce/issues"
   },
-  "homepage": "https://github.com/Oriery/debounce#readme",
+  "homepage": "https://github.com/Oriery/advanced-throttle-debounce#readme",
   "devDependencies": {
     "@types/node": "^20.2.5",
     "chai": "^4.3.7",

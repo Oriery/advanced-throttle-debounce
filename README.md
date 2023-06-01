@@ -1,6 +1,6 @@
 # advanced-throttle-debounce
 
-Converts a function into debounced or throttled one so that it is not called too often.
+NPM package which debounces/throttles a function so that it is not called too often. Supports many useful features.
 
 This library:
 
@@ -48,7 +48,7 @@ npm install advanced-throttle-debounce
 
 ## Usage
 
-[This tests](https://github.com/Oriery/debounce/tree/main/test) are ran in order to check the library. They are a good source of examples.
+[This tests](https://github.com/Oriery/advanced-throttle-debounce/tree/main/test) are ran in order to check the library. They are a good source of examples.
 
 ### Basic usage with default options (debounce)
 
