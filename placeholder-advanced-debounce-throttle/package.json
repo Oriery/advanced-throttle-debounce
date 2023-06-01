@@ -1,0 +1,9 @@
+{
+  "name": "advanced-debounce-throttle",
+  "version": "0.0.0",
+  "description": "Correct package name: \"advanced-throttle-debounce\"",
+  "main": "index.js",
+  "scripts": {
+    "publish": "npm publish --access public"
+  }
+}
