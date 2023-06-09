@@ -20,16 +20,13 @@ const defaultOptions = {
     treatSimilarArgsAsTheSame: false,
     forceDoubleCallEvenIfAttemptedOnlyOnes: false
 };
-// TODO: ability to change default options
-// TODO: ability to cancel the trailing call before it was called
 function debounce(func, options = {}) {
     options = Object.assign({}, defaultOptions, options);
     checkOptions(options);
     const map = new Map();
     const mapOfSimilarObjectsHashes = new Map();
-    return function () {
+    return function (...args) {
         const context = this;
-        const args = arguments;
         const hash = getHashForMap(context, args);
         let element = map.get(hash);
         if (!element) {

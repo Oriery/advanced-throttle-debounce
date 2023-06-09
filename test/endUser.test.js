@@ -21,8 +21,12 @@ const NORMAL_WAIT = 20
 const FASTER_THAN_WAIT = 10
 const LONGER_THAN_WAIT = 30
 
-let testFunc
-let debouncedTestFunc
+let testFunc = sandbox.spy()
+let debouncedTestFunc = controller.debounce(testFunc, { 
+  leading: true, 
+  trailing: false, 
+  wait: NORMAL_WAIT
+})
 
 beforeEach(() => {
   sandbox.restore()

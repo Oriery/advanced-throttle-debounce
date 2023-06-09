@@ -91,7 +91,13 @@ const defaultOptions : Options = {
 // TODO: ability to change default options
 // TODO: ability to cancel the trailing call before it was called
 
-export function debounce(func : Function , options : Options = {}) {
+// overload for synchronous functions
+export function debounce<T extends (...args: any[]) => any>(func : T, options ?: Options) : (...args: Parameters<T>) => Promise<ReturnType<T>>;
+
+// overload for asynchronous functions
+export function debounce<T extends (...args: any[]) => Promise<any>, R>(func : T, options ?: Options) : (...args: Parameters<T>) => ReturnType<T>;
+
+export function debounce(func : any, options : Options = {}) : any {
   options = Object.assign({}, defaultOptions, options);
 
   checkOptions(options);
@@ -99,9 +105,8 @@ export function debounce(func : Function , options : Options = {}) {
   const map = new Map<string, ElementOfMap>();
   const mapOfSimilarObjectsHashes = new Map<object, string>();
   
-  return function(this : any) {
+  return function(this : any, ...args : any[]) {
     const context = this;
-    const args = arguments;
     const hash = getHashForMap(context, args);
     
     let element = map.get(hash);
@@ -212,7 +217,7 @@ export function debounce(func : Function , options : Options = {}) {
     }
   }
 
-  function getHashForMap(context : object, args : IArguments) : string {
+  function getHashForMap(context : object, args : any[]) : string {
     let hashOfThis : string = '';
     let hashOfArgs : string = '';
   
