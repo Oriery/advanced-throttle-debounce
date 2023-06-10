@@ -48,5 +48,5 @@ export type Options = {
      */
     forceDoubleCallEvenIfAttemptedOnlyOnes?: boolean;
 };
-export declare function debounce<T extends (...args: any[]) => any>(func: T, options?: Options): (...args: Parameters<T>) => Promise<ReturnType<T>>;
 export declare function debounce<T extends (...args: any[]) => Promise<any>, R>(func: T, options?: Options): (...args: Parameters<T>) => ReturnType<T>;
+export declare function debounce<T extends (...args: any[]) => any>(func: T, options?: Options): (...args: Parameters<T>) => Promise<ReturnType<T>>;

@@ -91,11 +91,11 @@ const defaultOptions : Options = {
 // TODO: ability to change default options
 // TODO: ability to cancel the trailing call before it was called
 
-// overload for synchronous functions
-export function debounce<T extends (...args: any[]) => any>(func : T, options ?: Options) : (...args: Parameters<T>) => Promise<ReturnType<T>>;
-
+// ORDER OF OVERLOADS IS IMPORTANT
 // overload for asynchronous functions
 export function debounce<T extends (...args: any[]) => Promise<any>, R>(func : T, options ?: Options) : (...args: Parameters<T>) => ReturnType<T>;
+// overload for synchronous functions
+export function debounce<T extends (...args: any[]) => any>(func : T, options ?: Options) : (...args: Parameters<T>) => Promise<ReturnType<T>>;
 
 export function debounce(func : any, options : Options = {}) : any {
   options = Object.assign({}, defaultOptions, options);
