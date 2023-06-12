@@ -129,20 +129,20 @@ function debounce(func, options = {}) {
         let hashOfArgs = '';
         if (options.differentThis) {
             if (options.treatSimilarContextAsTheSame) {
-                hashOfThis = simpleHash(JSON.stringify(context));
+                hashOfThis = simpleHash(JSON.stringify(context, getCircularReplacer()));
             }
             else {
                 if (typeof context === 'object') {
                     hashOfThis = getUniqueHashOfObject(context);
                 }
                 else {
-                    hashOfThis = simpleHash(JSON.stringify(context));
+                    hashOfThis = simpleHash(JSON.stringify(context, getCircularReplacer()));
                 }
             }
         }
         if (options.differentArgs) {
             if (options.treatSimilarArgsAsTheSame) {
-                hashOfArgs = simpleHash(JSON.stringify(args));
+                hashOfArgs = simpleHash(JSON.stringify(args, getCircularReplacer()));
             }
             else {
                 for (let arg of args) {
@@ -150,7 +150,7 @@ function debounce(func, options = {}) {
                         hashOfArgs += getUniqueHashOfObject(arg);
                     }
                     else {
-                        hashOfArgs += simpleHash(JSON.stringify(arg));
+                        hashOfArgs += simpleHash(JSON.stringify(arg, getCircularReplacer()));
                     }
                 }
             }
@@ -163,13 +163,25 @@ function debounce(func, options = {}) {
             return hash;
         }
         else {
-            const newHash = simpleHash(JSON.stringify(object) + Math.random());
+            const newHash = simpleHash(JSON.stringify(object, getCircularReplacer()) + Math.random());
             mapOfSimilarObjectsHashes.set(object, newHash);
             return newHash;
         }
     }
 }
 exports.debounce = debounce;
+const getCircularReplacer = () => {
+    const seen = new WeakSet();
+    return (key, value) => {
+        if (typeof value === "object" && value !== null) {
+            if (seen.has(value)) {
+                return;
+            }
+            seen.add(value);
+        }
+        return value;
+    };
+};
 function checkOptions(options) {
     if (options.wait && options.wait < 0) {
         throw new Error("The 'wait' option can't be negative.");
