@@ -1,6 +1,6 @@
 # advanced-throttle-debounce
 
-NPM package which debounces/throttles a function so that it is not called too often. Supports many useful features.
+Debounces/throttles a function so that it is not called too often. Supports many useful features.
 
 This library:
 
